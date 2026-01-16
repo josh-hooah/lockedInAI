@@ -1,0 +1,37 @@
+:root{
+  --accent: #7c3aed; /* purple */
+}
+*{
+    margin: 0px;
+}
+
+
+[data-theme="dark"] .login .sign-in, .sign-up{ 
+  color: rgba(255,255,255,0.92);
+  background: black;
+}
+
+[data-theme="light"] .login .sign-in, .sign-up{ 
+  color: rgba(0, 0, 0, 0.92);
+  background: rgb(255, 255, 255);
+}
+
+.login {
+    text-align: center;
+    background-color: aqua;
+    height:100vh
+}
+
+form input{
+    border: none;
+    width: 40vh;
+    height: 30px;
+    color: rgb(70, 69, 69);
+    font-family: cursive;
+    font-weight: bold;
+    background-color: aliceblue;
+}
+
+.email,.password {
+    margin-top: 30px;
+}

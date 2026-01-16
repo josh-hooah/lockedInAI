@@ -1,0 +1,80 @@
+:root{
+  --accent: #7c3aed; /* purple */
+}
+*{
+    margin: 0px;
+}
+
+
+[data-theme="dark"] .dashboard .dashboard-sidebar,.dashboard .detail-cardl {
+  color: rgba(255,255,255,0.92);
+  background: black;
+}
+
+[data-theme="light"]  .dashboard .dashboard-sidebar,.dashboard .dashboard-detail{ 
+  color: rgba(0, 0, 0, 0.92);
+  background: rgb(255, 255, 255);
+}
+
+ .detail-card {
+    border:1px solid #bbb4b4ff;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: "10px"
+  }
+
+   .detail-dashboard{
+    grid-area: detail;
+    border-left: 1px solid #e0e0e0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px
+  }
+
+    .dashboard-header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border: 1px solid #bbb4b4ff;
+    gap: 12px;
+  }
+
+.dashboard-header-title{ 
+  font-size: 18px; 
+  font-weight: 600 
+}
+
+  .dashboard-sidebar {
+    grid-area: sidebar;
+    border-right:1px solid #e0e0e0;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+    .section-title {
+       font-size: 16px; 
+       font-weight: 600
+       }
+
+
+  .dashboard-tasklist {
+    display: flex;
+    flex-direction:column;
+    gap: 8px;
+    overflow-y: scroll;
+    scrollbar-width:none;
+    padding-right: 8px
+  }
+
+    .dashboard-chartcard {
+    border: 1px solid #bbb4b4ff;
+    border-radius: 12px;
+    padding: 12px;
+    height: 240px;
+  }
