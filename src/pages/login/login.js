@@ -11,6 +11,10 @@ import AppTheme from '../../general_component/shared-theme/AppTheme';
 import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import icon from '../../general_component/images/Lockedin_Icon only.png'
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -66,6 +70,7 @@ export default function Login(props) {
   // const [nameError, setNameError] = React.useState(false);
   // const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const [loginError, setLoginError] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const validateInputs = () => { //authenticating input
     // Validate only email and password for login form
@@ -186,13 +191,26 @@ export default function Login(props) {
                 fullWidth
                 name="password"
                 placeholder="••••••"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="new-password"
                 variant="outlined"
                 error={passwordError || !!loginError}
                 helperText={loginError || passwordErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </FormControl>
             <Button 
