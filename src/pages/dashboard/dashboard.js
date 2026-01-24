@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import  { useEffect, useMemo, useState } from "react";
 import {
   format,
   parseISO,
@@ -8,7 +7,6 @@ import {
   isPast,
   addDays,
   startOfDay,
-  endOfDay,
 } from "date-fns";
 import {
   LineChart,
@@ -117,7 +115,6 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: "8px",
-    overflowY: "auto",
     overflowY: "scroll",
     scrollbarWidth:"none",
     paddingRight: "8px",
@@ -252,15 +249,14 @@ function Dashboard() {
   );
 
   // Read logged-in user from localStorage (signup stores lockedin_user)
-  const [user, setUser] = useState(() => {
+  const user = (() => {
     try {
-      const raw = localStorage.getItem('lockedin_user') || localStorage.getItem('sozo_user');
+      const raw = localStorage.getItem('lockedin_user');
       return raw ? JSON.parse(raw) : null;
     } catch {
       return null;
     }
-  });
-  const navigate = useNavigate();
+  })();
 
   // Derive initials for avatar from name or email
   const initials = useMemo(() => {
@@ -378,7 +374,7 @@ function Dashboard() {
           </div>
 
           {/* Scoped media query to show mobile avatar and adjust layout on small screens */}
-          <style>{`@media (max-width: 760px) { .dashboard { grid-template-columns: 1fr; grid-template-rows: 56px 1fr; grid-template-areas: \"header\" \"main\"; } .dashboard-sidebar { display: none; } .mobile-avatar { display: flex !important; } .dashboard-content { grid-area: main; } .dashboard-detail { display: none; } }`}</style>
+          <style>{`@media (max-width: 760px) { .dashboard { grid-template-columns: 1fr; grid-template-rows: 56px 1fr; grid-template-areas: /"header/" /"main/"; } .dashboard-sidebar { display: none; } .mobile-avatar { display: flex !important; } .dashboard-content { grid-area: main; } .dashboard-detail { display: none; } }`}</style>
         </header>
 
         {/* Sidebar — Lists */}
@@ -598,7 +594,7 @@ function TaskDetail({ task, onUpdate, onToggle, onDelete }) {
     setTitle(task.title);
     setNotes(task.notes || "");
     setDue(task.dueDate || "");
-  }, [task.id]);
+  }, [task]);
 
   const save = () => {
     onUpdate({

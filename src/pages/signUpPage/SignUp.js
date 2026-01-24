@@ -8,13 +8,12 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../../general_component/shared-theme/AppTheme';
-import ColorModeSelect from '../../general_component/shared-theme/ColorModeSelect';
 import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from './components/CustomIcons';
+import { GoogleIcon, FacebookIcon } from './components/CustomIcons';
 import icon from '../../general_component/images/Lockedin_Icon only.png'
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -113,7 +112,7 @@ export default function SignUp(props) {
     const name = form.get('name');
     const email = form.get('email');
     const password = form.get('password');
-    const user = { name, email };
+    // const user = { name, email };
     // Store user info including password locally so login can authenticate.
     // Note: for production use a secure server-side auth — this is local-only.
     const stored = { name, email, password };

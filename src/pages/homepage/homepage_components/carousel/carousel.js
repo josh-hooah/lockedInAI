@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import  { useCallback, useEffect, useRef, useState } from 'react'
 import './carousel.css'
 
 const Carousel = ({ autoplay = false, interval = 3500 }) => {
@@ -14,17 +14,17 @@ const Carousel = ({ autoplay = false, interval = 3500 }) => {
   const pausedRef = useRef(false)
   const touchStartX = useRef(0)
 
-  const changeIndex = (next) => {
+  const changeIndex = useCallback((next) => {
     const clamped = (next + SLIDES.length) % SLIDES.length
     setIndex(clamped)
-  }
+  }, [SLIDES.length])
 
   useEffect(() => {
     if (!autoplay) return
     clearTimeout(timerRef.current)
     if (!pausedRef.current) timerRef.current = setTimeout(() => changeIndex(index + 1), interval)
     return () => clearTimeout(timerRef.current)
-  }, [index, autoplay, interval])
+  }, [index, autoplay, interval, changeIndex])
 
   const handleMouseEnter = () => {
     pausedRef.current = true

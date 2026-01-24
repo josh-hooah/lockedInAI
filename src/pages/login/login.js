@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../../general_component/shared-theme/AppTheme';
-import ColorModeSelect from '../../general_component/shared-theme/ColorModeSelect';
 import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
@@ -59,13 +58,13 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 // Login component — validates credentials against locally stored signup data.
 export default function Login(props) {
   const navigate = useNavigate();
-  const [email, setEmail] = React.useState('')
+  // const [email, setEmail] = React.useState('')
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  // const [nameError, setNameError] = React.useState(false);
+  // const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const [loginError, setLoginError] = React.useState('');
 
   const validateInputs = () => { //authenticating input

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import './event.css'
 
 const pastEvents = [
@@ -13,22 +13,23 @@ const futureEvents = [
 
 const PresentEvent = () => {
   // target is 5 days from now
-  const target = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
-  const [remaining, setRemaining] = useState(getRemaining())
+  const target = useMemo(() => new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), [])
 
-  function getRemaining() {
+  const getRemaining = useCallback(() => {
     const diff = Math.max(0, target - Date.now())
     const days = Math.floor(diff / (24 * 60 * 60 * 1000))
     const hours = Math.floor((diff / (60 * 60 * 1000)) % 24)
     const minutes = Math.floor((diff / (60 * 1000)) % 60)
     const seconds = Math.floor((diff / 1000) % 60)
     return { days, hours, minutes, seconds }
-  }
+  }, [target])
+
+  const [remaining, setRemaining] = useState(getRemaining())
 
   useEffect(() => {
     const t = setInterval(() => setRemaining(getRemaining()), 1000)
     return () => clearInterval(t)
-  }, [])
+  }, [getRemaining])
 
   return (
     <article className="event-card present">
