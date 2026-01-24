@@ -9,10 +9,11 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../../general_component/shared-theme/AppTheme';
 import ColorModeSelect from '../../general_component/shared-theme/ColorModeSelect';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from './components/CustomIcons';
+import Divider from '@mui/material/Divider';
+import FormLabel from '@mui/material/FormLabel';
+import FormControl from '@mui/material/FormControl';
 import icon from '../../general_component/images/Lockedin_Icon only.png'
 import { Link, useNavigate } from 'react-router-dom';
-import { LoginData } from '../../general_component/data';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
