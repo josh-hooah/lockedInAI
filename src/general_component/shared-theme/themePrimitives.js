@@ -137,9 +137,9 @@ export const getDesignTokens = (mode) => {
       },
       divider: mode === 'dark' ? alpha(gray[700], 0.6) : alpha(gray[300], 0.4),
       background: {
-        default: 'hsl(0, 0%, 99%)',
-        paper: 'hsl(220, 35%, 97%)',
-        ...(mode === 'dark' && { default: gray[900], paper: 'hsl(220, 30%, 7%)' }),
+        default: 'hsl(0, 0%, 95%)',
+        paper: 'hsl(220, 35%, 92%)',
+        ...(mode === 'dark' && { default: 'hsl(220, 35%, 8%)', paper: 'hsl(220, 30%, 12%)' }),
       },
       text: {
         primary: gray[800],

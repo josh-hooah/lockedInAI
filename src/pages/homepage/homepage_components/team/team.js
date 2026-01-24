@@ -3,13 +3,11 @@ import './team.css'
 import atovs from '../../../../general_component/images/atovs.jpg'
 import eug from '../../../../general_component/images/eug.jpg'
 import nosa from '../../../../general_component/images/nosa.jpg'
-import josh from '../../../../general_component/images/josh.JPG'
 
 const TEAM = [
   { id: 't1', name: 'Atova Ogaga', role: 'Founder & CEO',pics: atovs },
   { id: 't2', name: 'Eugene Johnson', role: 'Chief Media Officer', pics: eug },
   { id: 't3', name: 'Nosakhare Jesuorobo', role: 'Backend Dev', pics: nosa },
-  { id: 't4', name: 'Emakpor Joshua', role: 'Tech Lead', pics: josh },
 ]
 
 const Team = ({ autoplay = false, interval = 3500 }) => {
