@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import './header.css'
 import logo from '../../../general_component/images/Lockedin_Icon only.png'
 import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom';
 
 const styles = {
   buttonGhost: {
