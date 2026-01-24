@@ -2,6 +2,20 @@ import React, { useEffect, useState } from 'react'
 import './header.css'
 import logo from '../../../general_component/images/Lockedin_Icon only.png'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+
+const styles = {
+  buttonGhost: {
+    background: "transparent",
+    color: "#1a73e8",
+    border: "1px solid #1a73e8",
+    borderRadius: "8px",
+    padding: "8px 12px",
+    cursor: "pointer",
+    fontWeight: 600,
+  }
+}
+
 
 const Header = () => {
 	const [theme, setTheme] = useState(() => {
@@ -41,7 +55,9 @@ const Header = () => {
 
 	const toggleTheme = () => setTheme((t) => (t === 'light' ? 'dark' : 'light'))
 
+const navigate = useNavigate();
 	return (
+		
 		<header className="site-header">
 			<div className="header-inner">
 				<div className="logo">
@@ -60,6 +76,15 @@ const Header = () => {
 					<a href="/about" onClick={() => setMobileOpen(false)}>About</a>
 					<a href="/contact" onClick={() => setMobileOpen(false)}>Contact</a>
 					<a href="/pricing" onClick={() => setMobileOpen(false)}>Pricing</a>
+					{
+						localStorage.getItem('lockedin_user')  ? (
+						<button style={styles.buttonGhost} onClick={() => { localStorage.removeItem('lockedin_user'); localStorage.removeItem('sozo_user'); navigate('/signin'); }}>
+						Sign out
+						</button>
+						) : (
+							null
+						)
+					}
 				</nav>
 
 				<button

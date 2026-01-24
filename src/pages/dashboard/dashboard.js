@@ -20,9 +20,10 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
+import StreakTracker from './components/StreakTracker';
 
 /**
- * Styles — minimal CSS-in-JS for a Google Tasks–like look.
+ * Styles — minimal CSS-in-JS  
  */
 const styles = {
   app: {
@@ -288,6 +289,11 @@ function Dashboard() {
     return days;
   }, [tasks]);
 
+  // Calculate productivity: (total tasks - failed tasks) / total tasks * 100
+  const totalTasks = tasks.length;
+  const failedTasks = tasks.filter(t => t.dueDate && isPast(parseISO(t.dueDate)) && !t.completed).length;
+  const productivity = totalTasks > 0 ? ((totalTasks - failedTasks) / totalTasks) * 100 : 0;
+
   // List actions
   const addList = () => {
     const name = prompt("List name:");
@@ -303,17 +309,6 @@ function Dashboard() {
     setLists((prev) => prev.map((l) => (l.id === id ? { ...l, name } : l)));
   };
 
-  // const deleteList = (id) => {
-  //   if (!confirm("Delete this list and its tasks?")) return;
-  //   setLists((prev) => prev.filter((l) => l.id !== id));
-  //   setTasks((prev) => prev.filter((t) => t.listId !== id));
-  //   if (activeListId === id) {
-  //     const next = lists.find((l) => l.id !== id)?.id;
-  //     setActiveListId(next || null);
-  //     setSelectedTaskId(null);
-  //   }
-  // };
-
   // Task actions
   const addTask = (title, dueDateISO) => {
     if (!title?.trim()) return;
@@ -326,7 +321,6 @@ function Dashboard() {
       completed: false,
       completedAt: null,
       createdAt: todayISO(),
-      order: visibleTasks.length,
     };
     setTasks((prev) => [...prev, newTask]);
     setSelectedTaskId(newTask.id);
@@ -355,174 +349,144 @@ function Dashboard() {
     );
   };
 
-  const moveTask = (id, direction) => {
-    const listTasks = tasks
-      .filter((t) => t.listId === activeListId)
-      .sort((a, b) => a.order - b.order);
-    const idx = listTasks.findIndex((t) => t.id === id);
-    if (idx < 0) return;
-    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
-    if (swapIdx < 0 || swapIdx >= listTasks.length) return;
-    const a = listTasks[idx];
-    const b = listTasks[swapIdx];
-    const updated = tasks.map((t) => {
-      if (t.id === a.id) return { ...t, order: b.order };
-      if (t.id === b.id) return { ...t, order: a.order };
-      return t;
-    });
-    setTasks(updated);
-  };
-
   return (
-    <div style={styles.app} className="dashboard">
-      {/* Header */}
-      <header style={styles.header}  className = 'dashboard-header'>
-        <div style={styles.headerTitle}>Tasks</div>
-        <div style={{ marginLeft: "auto", display: "flex", gap: "8px", alignItems: 'center' }}>
-          <button style={styles.buttonGhost} onClick={addList}>
-            + New list
-          </button>
-          {/* Mobile avatar: hidden on wide screens, shown on small viewports via media query below */}
-          <div className="mobile-avatar" style={{ display: "none", alignItems: 'center' }}>
-            <div
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: "50%",
-                background: "#1a73e8",
-                color: "#fff",
-                display: "grid",
-                placeItems: "center",
-                fontWeight: 700,
-              }}
-            >
-              {initials}
-            </div>
-          </div>
-        </div>
-
-        {/* Scoped media query to show mobile avatar and adjust layout on small screens */}
-        <style>{`@media (max-width: 760px) { .dashboard { grid-template-columns: 1fr; grid-template-rows: 56px 1fr; grid-template-areas: \"header\" \"main\"; } .dashboard-sidebar { display: none; } .mobile-avatar { display: flex !important; } .dashboard-content { grid-area: main; } .dashboard-detail { display: none; } }`}</style>
-      </header>
-
-      {/* Sidebar — Lists */}
-      <aside style={styles.sidebar} className="dashboard-sidebar">
-        <div style={styles.sectionTitle}>Lists</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          {lists.map((l) => (
-            <div
-              key={l.id}
-              style={styles.listItem(l.id === activeListId)}
-              onClick={() => setActiveListId(l.id)}
-            >
-              <span style={styles.listName}>{l.name}</span>
-              <div style={{ display: "flex", gap: "6px" }}>
-                <button
-                  style={styles.buttonGhost}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    renameList(l.id);
-                  }}
-                >
-                  Rename
-                </button>
-                {/* <button
-                  style={styles.buttonGhost}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteList(l.id);
-                  }}
-                >
-                  Delete
-                </button> */}
+    <div>
+      <div style={styles.app} className="dashboard">
+        {/* Header */}
+        <header style={styles.header}  className = 'dashboard-header'>
+          <div style={styles.headerTitle}>Tasks</div>
+          <div style={{ marginLeft: "auto", display: "flex", gap: "8px", alignItems: 'center' }}>
+            <button style={styles.buttonGhost} onClick={addList}>
+              + New list
+            </button>
+            {/* Mobile avatar: hidden on wide screens, shown on small viewports via media query below */}
+            <div className="mobile-avatar" style={{ display: "none", alignItems: 'center' }}>
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: "50%",
+                  background: "#1a73e8",
+                  color: "#fff",
+                  display: "grid",
+                  placeItems: "center",
+                  fontWeight: 700,
+                }}
+              >
+                {initials}
               </div>
             </div>
-          ))}
-        </div>
-        {/* Profile / avatar at bottom-left of sidebar */}
-        <div style={{ marginTop: "auto", paddingTop: 12, borderTop: "1px solid #f1f3f4", display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#1a73e8', color: '#fff', display: 'grid', placeItems: 'center', fontWeight: 700 }}>{initials}</div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontWeight: 700 }}>{user?.name || user?.email || 'Guest'}</div>
-            <div style={{ fontSize: 12, color: '#5f6368' }}>{user?.email || ''}</div>
           </div>
-          <div style={{ marginLeft: 'auto' }}>
-            <button style={styles.buttonGhost} onClick={() => { localStorage.removeItem('lockedin_user'); localStorage.removeItem('sozo_user'); navigate('/signin'); }}>
-              Sign out
-            </button>
-          </div>
-        </div>
-      </aside>
 
-      {/* Main — Task list and add form */}
-      <main style={styles.main} className="dashboard-content" >
-        <div style={styles.sectionTitle}>
-          {activeList ? activeList.name : "No list selected"}
-        </div>
+          {/* Scoped media query to show mobile avatar and adjust layout on small screens */}
+          <style>{`@media (max-width: 760px) { .dashboard { grid-template-columns: 1fr; grid-template-rows: 56px 1fr; grid-template-areas: \"header\" \"main\"; } .dashboard-sidebar { display: none; } .mobile-avatar { display: flex !important; } .dashboard-content { grid-area: main; } .dashboard-detail { display: none; } }`}</style>
+        </header>
 
-        {/* Add task */}
-        <AddTaskRow onAdd={addTask} />
-
-        {/* Task list */}
-        <div style={styles.taskList}>
-          {visibleTasks
-            .sort((a, b) => a.order - b.order)
-            .map((t) => (
-              <TaskRow
-                key={t.id}
-                task={t}
-                selected={t.id === selectedTaskId}
-                onSelect={() => setSelectedTaskId(t.id)}
-                onToggle={() => toggleComplete(t.id)}
-                onDelete={() => deleteTask(t.id)}
-                onMoveUp={() => moveTask(t.id, "up")}
-                onMoveDown={() => moveTask(t.id, "down")}
-              />
+        {/* Sidebar — Lists */}
+        <aside style={styles.sidebar} className="dashboard-sidebar">
+          <div style={styles.sectionTitle}>Lists</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            {lists.map((l) => (
+              <div
+                key={l.id}
+                style={styles.listItem(l.id === activeListId)}
+                onClick={() => setActiveListId(l.id)}
+              >
+                <span style={styles.listName}>{l.name}</span>
+                <div style={{ display: "flex", gap: "6px" }}>
+                  <button
+                    style={styles.buttonGhost}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      renameList(l.id);
+                    }}
+                  >
+                    Rename
+                  </button>
+                </div>
+              </div>
             ))}
-          {visibleTasks.length === 0 && (
-            <div style={{ color: "#5f6368" }}>No tasks yet.</div>
-          )}
-        </div>
-      </main>
-
-      {/* Detail pane */}
-      <section style={styles.detail} className="dashboard-detail">
-        <div style={styles.sectionTitle}>Details</div>
-        <div style={styles.detailCard}>
-          {selectedTask ? (
-            <TaskDetail
-              task={selectedTask}
-              onUpdate={(patch) => updateTask(selectedTask.id, patch)}
-              onToggle={() => toggleComplete(selectedTask.id)}
-              onDelete={() => deleteTask(selectedTask.id)}
-            />
-          ) : (
-            <div style={{ color: "#5f6368" }}>
-              Select a task to view details.
+          </div>
+          {/* Profile / avatar at bottom-left of sidebar */}
+          <div style={{ marginTop: "auto", paddingTop: 12, borderTop: "1px solid #f1f3f4", display: 'flex', gap: 10, alignItems: 'center' }}>
+            <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#1a73e8', color: '#fff', display: 'grid', placeItems: 'center', fontWeight: 700 }}>{initials}</div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ fontWeight: 700 }}>{user?.name || user?.email || 'Guest'}</div>
+              <div style={{ fontSize: 12, color: '#5f6368' }}>{user?.email || ''}</div>
             </div>
-          )}
-        </div>
+            <div style={{ marginLeft: 'auto' }}>
+            </div>
+          </div>
+        </aside>
 
-        {/* Chart */}
-        <div style={styles.chartCard}>
-          <div style={styles.sectionTitle}>Completion trend (14 days)</div>
-          <ResponsiveContainer width="100%" height="85%">
-            <LineChart data={statsData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="count"
-                stroke="#1a73e8"
-                strokeWidth={2}
-                dot={{ r: 3 }}
+        {/* Main — Task list and add form */}
+        <main style={styles.main} className="dashboard-content" >
+          <div style={styles.sectionTitle}>
+            {activeList ? activeList.name : "No list selected"}
+          </div>
+
+          {/* Add task */}
+          <AddTaskRow onAdd={addTask} />
+
+          {/* Task list */}
+          <div style={styles.taskList}>
+            {visibleTasks
+              .map((t) => (
+                <TaskRow
+                  key={t.id}
+                  task={t}
+                  selected={t.id === selectedTaskId}
+                  onSelect={() => setSelectedTaskId(t.id)}
+                  onToggle={() => toggleComplete(t.id)}
+                  onDelete={() => deleteTask(t.id)}
+                />
+              ))}
+            {visibleTasks.length === 0 && (
+              <div style={{ color: "#5f6368" }}>No tasks yet.</div>
+            )}
+          </div>
+        </main>
+
+        {/* Detail pane */}
+        <section style={styles.detail} className="dashboard-detail">
+          <div style={styles.sectionTitle}>Details</div>
+          <div style={styles.detailCard}>
+            {selectedTask ? (
+              <TaskDetail
+                task={selectedTask}
+                onUpdate={(patch) => updateTask(selectedTask.id, patch)}
+                onToggle={() => toggleComplete(selectedTask.id)}
+                onDelete={() => deleteTask(selectedTask.id)}
               />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
+            ) : (
+              <div style={{ color: "#5f6368" }}>
+                Select a task to view details.
+              </div>
+            )}
+          </div>
+
+          {/* Chart */}
+          <div style={styles.chartCard}>
+            <div style={styles.sectionTitle}>Completion trend (14 days)</div>
+            <ResponsiveContainer width="100%" height="85%">
+              <LineChart data={statsData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#1a73e8"
+                  strokeWidth={2}
+                  dot={{ r: 3 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+      </div>
+      <StreakTracker productivity={productivity} />
     </div>
   );
 }
@@ -535,6 +499,10 @@ function AddTaskRow({ onAdd }) {
   const [due, setDue] = useState("");
 
   const submit = () => {
+    if (!due) {
+      alert("Due date must be set");
+      return;
+    }
     onAdd(title, due || null);
     setTitle("");
     setDue("");
@@ -573,8 +541,6 @@ function TaskRow({
   onSelect,
   onToggle,
   onDelete,
-  onMoveUp,
-  onMoveDown,
 }) {
   return (
     <div style={styles.taskItem(selected)} onClick={onSelect}>
@@ -611,24 +577,6 @@ function TaskRow({
           style={styles.buttonGhost}
           onClick={(e) => {
             e.stopPropagation();
-            onMoveUp();
-          }}
-        >
-          ↑
-        </button>
-        <button
-          style={styles.buttonGhost}
-          onClick={(e) => {
-            e.stopPropagation();
-            onMoveDown();
-          }}
-        >
-          ↓
-        </button>
-        <button
-          style={styles.buttonGhost}
-          onClick={(e) => {
-            e.stopPropagation();
             onDelete();
           }}
         >
@@ -660,6 +608,8 @@ function TaskDetail({ task, onUpdate, onToggle, onDelete }) {
       dueDate: due || null,
     });
   };
+
+  const isFailed = task.dueDate && isPast(parseISO(task.dueDate)) && !task.completed;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -698,6 +648,7 @@ function TaskDetail({ task, onUpdate, onToggle, onDelete }) {
         <button
           style={{ ...styles.buttonGhost, color: "#d93025", borderColor: "#d93025" }}
           onClick={onDelete}
+          disabled={isFailed}
         >
           Delete task
         </button>
@@ -709,6 +660,11 @@ function TaskDetail({ task, onUpdate, onToggle, onDelete }) {
           ? ` • Completed ${format(parseISO(task.completedAt), "MMM d, yyyy")}`
           : ""}
       </div>
+      {isFailed && (
+        <div style={{ color: "#d93025", fontSize: "14px", fontWeight: 600 }}>
+          You Were not LockedIn on this.
+        </div>
+      )}
     </div>
   );
 }

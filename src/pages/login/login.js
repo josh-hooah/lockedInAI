@@ -127,6 +127,26 @@ export default function Login(props) {
     // Successful login — persist the active user and navigate
     localStorage.setItem('lockedin_user', JSON.stringify(stored));
     setLoginError('');
+
+    // Track login streak
+    const today = new Date().toDateString();
+    const lastLogin = localStorage.getItem('lastLoginDate');
+    let streak = parseInt(localStorage.getItem('loginStreak') || '0', 10);
+
+    if (lastLogin !== today) {
+      // New day: increment streak if consecutive or start new
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      if (lastLogin === yesterday.toDateString()) {
+        streak += 1;
+      } else {
+        streak = 1; // Reset if not consecutive
+      }
+      localStorage.setItem('lastLoginDate', today);
+      localStorage.setItem('loginStreak', streak.toString());
+    }
+    // If same day, do nothing (already counted)
+
     navigate('/dashboard');
   };
 
